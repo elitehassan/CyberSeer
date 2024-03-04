@@ -2,7 +2,7 @@ import {Bot} from "grammy";
 
 const bot = new Bot("");
 
-//Handling the /start command
+//rahul the /start command
 bot.command("start", (ctx) => ctx.reply("My name is the CryptoMancer, and I will be assisting you with your crypto magik."))
 //listen to messages
 bot.on("message", async (ctx) =>    {
