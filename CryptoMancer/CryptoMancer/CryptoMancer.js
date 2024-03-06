@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var grammy_1 = require("grammy");
 var bot = new grammy_1.Bot("");
-//rahul the /start command
+//Handling the /start command
 bot.command("start", function (ctx) { return ctx.reply("My name is the CryptoMancer, and I will be assisting you with your crypto magik."); });
 //listen to messages
 bot.on("message", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
@@ -56,5 +56,3 @@ bot.on("edited_message", function (ctx) { return __awaiter(void 0, void 0, void 
         return [2 /*return*/];
     });
 }); });
-console.log("Lama Rammal, Hassan Rammal");
-console.log("further testing");

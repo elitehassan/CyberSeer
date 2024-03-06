@@ -1,5 +1,5 @@
 import {Bot} from "grammy";
-
+import axios from "axios";
 const bot = new Bot("");
 
 //Handling the /start command
