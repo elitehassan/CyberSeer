@@ -13,5 +13,5 @@ bot.on("edited_message", async (ctx) =>     {
     const editedMsg = ctx.msg.text;
 });
 
-console.log("Lama Rammal, Hassan Rammal");
-console.log("further testing");
+
+
