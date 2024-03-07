@@ -3,7 +3,7 @@ import axios from "axios";
 const bot = new Bot("");
 
 //Handling the /start command
-bot.command("start", (ctx) => ctx.reply("My name is the CryptoMancer, and I will be assisting you with your crypto magik."))
+bot.command("start", (ctx)  => ctx.reply("My name is the CryptoMancer, and I will be assisting you with your crypto magik.")) 
 //listen to messages
 bot.on("message", async (ctx) =>    {
     const message = ctx.message; //message object
