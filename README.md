@@ -1,2 +1,0 @@
-# CryptoMancer
-Token Scanner Bot
