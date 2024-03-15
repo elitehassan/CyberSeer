@@ -6,7 +6,7 @@ bot.command("start", async (ctx) => {
   await ctx.reply(
     "My name is the CryptoMancer, and I will be assisting you with your crypto magik."
   );
-});
+}); 
 
 bot.on("message", async (ctx) => {
   await ctx.reply("hi");
