@@ -1,6 +1,10 @@
 import { Bot } from "grammy";
 
 const bot = new Bot("6086262525:AAGnOMFfx8SEM5E8IP2jJb5gWW3JJr63ZZA");
+let user: { 
+  username: string;
+  userId: number;
+  }
 
 bot.command("start", async (ctx) => {
   await ctx.reply(
@@ -14,7 +18,13 @@ bot.on("message", async (ctx) => {
 });
 
 bot.use( async (ctx) => {
-  const (username, userId)=ctx.from;
-})
+  if (ctx.from?.username!=undefined){
+  user.username=ctx.from?.username;
+  }
+  if (ctx.from?.id!=undefined){
+    user.userId=ctx.from.id;
+  }
+});
 
 bot.start();
+  
