@@ -8,8 +8,13 @@ bot.command("start", async (ctx) => {
   );
 }); 
 
+
 bot.on("message", async (ctx) => {
   await ctx.reply("hi");
 });
+
+bot.use( async (ctx) => {
+  const (username, userId)=ctx.from;
+})
 
 bot.start();
