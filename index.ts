@@ -13,12 +13,22 @@ bot.command("start", async (ctx) => {
 }); 
 
 bot.use( async (ctx) => {
+  let username;
+  let userId;
+
   if (ctx.from?.username!=undefined){
-  user.username=ctx.from?.username;
+  username=ctx.from.username;
   }
+
   if (ctx.from?.id!=undefined){
-    user.userId=ctx.from.id;
+  userId = ctx.from.id;
   }
+
+ const user = {
+  username: username,
+  userId: userId,
+ };
+ 
 });
 
 bot.command("getId", async (ctx) => {
