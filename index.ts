@@ -12,11 +12,6 @@ bot.command("start", async (ctx) => {
   );
 }); 
 
-
-bot.on("message", async (ctx) => {
-  await ctx.reply("hi");
-});
-
 bot.use( async (ctx) => {
   if (ctx.from?.username!=undefined){
   user.username=ctx.from?.username;
@@ -24,6 +19,10 @@ bot.use( async (ctx) => {
   if (ctx.from?.id!=undefined){
     user.userId=ctx.from.id;
   }
+});
+
+bot.command("getId", async (ctx) => {
+  await ctx.reply(user.userId.toString());
 });
 
 bot.start();
