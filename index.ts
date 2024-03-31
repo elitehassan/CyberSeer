@@ -1,6 +1,6 @@
 import { Bot } from "grammy";
 
-const bot = new Bot("6086262525:AAGnOMFfx8SEM5E8IP2jJb5gWW3JJr63ZZA");
+const bot = new Bot("6982927940:AAHxd-jtUvEeWrLyWIeOKytcmlEaym_TuZc");
 let user: { 
   username: string;
   userId: number;
@@ -8,7 +8,7 @@ let user: {
 
 bot.command("start", async (ctx) => {
   await ctx.reply(
-    "My name is the CryptoMancer, and I will be assisting you with your crypto magik."
+    "My name is the CyberSeer, and I will be assisting you with your crypto magik."
   );
 }); 
 
