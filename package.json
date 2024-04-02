@@ -1,8 +1,8 @@
 {
-  "name": "cryptomancer",
+  "name": "cyberseer",
   "version": "1.0.0",
-  "description": "Hassouna's Cryptomancer",
-  "main": "CryptoMancer.js",
+  "description": "Hassouna's CyberSeer",
+  "main": "CyberSeer.js",
   "dependencies": {
     "grammy": "1.21.1",
     "typescript": "5.4.2"

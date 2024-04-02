@@ -24,12 +24,15 @@ bot.use( async (ctx) => {
    user = {
     username: username,
     userId: userId
-  }
+  };
 });
 
+// bot.command("getId", async (ctx) => {
+//   await ctx.reply(user.userId.toString());
+// });
 
-bot.command("getId", async (ctx) => {
-  await ctx.reply(user.userId.toString());
+bot.command("/pullinfo", async (ctx) => {
+  const tokenAddress  = ctx.message
 });
 
 bot.start();
