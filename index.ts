@@ -31,7 +31,7 @@ bot.use( async (ctx) => {
 //   await ctx.reply(user.userId.toString());
 // });
 
-bot.command("/pullinfo", async (ctx) => {
+bot.command("pullinfo", async (ctx) => {
   const tokenAddress  = ctx.message
 });
 
