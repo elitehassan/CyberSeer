@@ -4,6 +4,7 @@
   "description": "Hassouna's CyberSeer",
   "main": "CyberSeer.js",
   "dependencies": {
+    "ethers": "^6.11.1",
     "grammy": "1.21.1",
     "typescript": "5.4.2"
   },
