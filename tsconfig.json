@@ -17,7 +17,8 @@
     "resolveJsonModule": true,
     "useUnknownInCatchVariables": false,
     "sourceMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["ethers"]
   },
   "include": ["index.ts"]
 }
