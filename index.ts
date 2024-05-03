@@ -41,19 +41,6 @@ const contractABI =  [
         "anonymous": false,
         "inputs": [
             {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_maxTxAmount",
-                "type": "uint256"
-            }
-        ],
-        "name": "MaxTxAmountUpdated",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
                 "indexed": true,
                 "internalType": "address",
                 "name": "previousOwner",
@@ -92,19 +79,6 @@ const contractABI =  [
             }
         ],
         "name": "Transfer",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "_tax",
-                "type": "uint256"
-            }
-        ],
-        "name": "TransferTaxUpdated",
         "type": "event"
     },
     {
