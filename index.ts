@@ -495,13 +495,18 @@ try {
 async function getTokenDetails(tokenAddress: string) {
   const contract = new ethers.Contract(tokenAddress, contractABI, ankrProvider);
   const tokenName = await contract.name();
-  const tokenMaxBuy = await contract._maxTxAmount();
   const totalSupply = await contract.totalSupply();
+//   const tokenMaxBuy = await contract._maxTxAmount();
+  const buyTax = await contract.feeOnBuy;
+  const sellTax = await contract.feeOnSell;
+
 
   return{
     tokenName: tokenName,
-    tokenMaxBuy: tokenMaxBuy.toString(),
-    tokenSupply: totalSupply.toString(),
+    tokenSupply: ethers.formatUnits(totalSupply, 18).toString(),
+    // tokenMaxBuy: tokenMaxBuy.toString(),
+    buyTax,
+    sellTax,
   }
 
 }
@@ -510,6 +515,8 @@ function formatTokenDetails(tokenDetails: any ): string {
   return `Token Name: ${tokenDetails.tokenName}
   Total Supply: ${tokenDetails.tokenSupply}
   Max Buy: ${tokenDetails.tokenMaxBuy}
+  Taxes: 
+  B: ${tokenDetails.buyTax}  | S: ${tokenDetails.sellTax}
   `
 }
 
