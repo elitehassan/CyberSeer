@@ -56,7 +56,7 @@ bot.use(async (ctx) => {
     if (username && userId && firstName && lastName) {
         ctx.reply("sending message");
         const query = "INSERT INTO info (user_Id, username, first_name, last_name, last_seen) VALUES (?, ?, ?, ?, NOW()) on duplicate key update last_seen=NOW(); "
-        const tokenQuery = "INSERT INTO tokens (user_Id) VALUES (?)";
+        const tokenQuery = "INSERT INTO tokens (user_Id) VALUES (?);";
         connection.query(query, [userId, username, firstName, lastName], (error) => {
             if (error) {
                 ctx.reply("Error inserting user. ");
