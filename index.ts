@@ -115,12 +115,12 @@ function formatNumber(value:bigint): string {
 
 const supplyValue = Number(value.toString());
 
-    if (supplyValue >= 1e9){
-        return (supplyValue/1e9).toFixed(2) + ' b'
-    } else if (supplyValue >= 1e6) {
-        return (supplyValue / 1e6).toFixed(2) + ' m';
-    } else if (supplyValue >= 1e3){
-        return (supplyValue / 1e3).toFixed(2)+ ' k';
+    if (supplyValue >= 10e9){
+        return (supplyValue/10e9).toFixed(2) + ' b'
+    } else if (supplyValue >= 10e6) {
+        return (supplyValue / 10e6).toFixed(2) + ' m';
+    } else if (supplyValue >= 10e3){
+        return (supplyValue / 10e3).toFixed(2)+ ' k';
     }else {
         return supplyValue.toString();   
     }
