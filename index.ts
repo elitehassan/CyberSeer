@@ -105,7 +105,7 @@ async function getTokenDetails(tokenAddress: string) {
     // to make this more complicated
     return {
         tokenName: tokenName,
-        tokenSupply: totalSupply,
+        tokenSupply: ethers.formatUnits(totalSupply, 8).toString(),
         // tokenMaxBuy: tokenMaxBuy.toString(),
     }
     
@@ -113,10 +113,10 @@ async function getTokenDetails(tokenAddress: string) {
 
 function formatNumber(value:bigint): string {
 
-const supplyValue = Number(value.toString());
+const supplyValue = Number(value);
 
     if (supplyValue >= 10e9){
-        return (supplyValue/10e9).toFixed(2) + ' b'
+        return (supplyValue/10e9).toFixed(2).toString()+ ' b';
     } else if (supplyValue >= 10e6) {
         return (supplyValue / 10e6).toFixed(2) + ' m';
     } else if (supplyValue >= 10e3){
