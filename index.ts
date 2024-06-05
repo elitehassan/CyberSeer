@@ -27,34 +27,34 @@ bot.command("start", async (ctx) => {
     await ctx.reply(
         "My name is the CyberSeer, and I will be assisting you with your crypto magik."
     );
-    // let username:string="";
-    // const firstName = ctx.from?.first_name;
-    // const lastName = ctx.from?.last_name;
-    // if (ctx.from?.username != undefined) {
-    //     username = ctx.from.username;
-    // }
-    // if (ctx.from?.id != undefined) {
-    //     userId = ctx.from.id;
-    // }
-    // ctx.reply("making a check")
-    // if (username && userId && firstName && lastName) {
-    //     ctx.reply("sending message");
-    //     const query = "INSERT INTO info (user_Id, username, first_name, last_name, last_seen) VALUES (?, ?, ?, ?, NOW()) on duplicate key update last_seen=NOW();";
-    //     const userIdTokenQuery = "INSERT IGNORE INTO tokens (user_Id) VALUES (?);";
-    //     connection.query(query, [userId, username, firstName, lastName], (error, results, fields) => {
-    //         if (error) {
-    //             ctx.reply("Error inserting user. ");
-    //             return;
-    //         }
-    //         connection.query(userIdTokenQuery, [userId], (tokenError) => {
-    //             if (tokenError) {
-    //                 ctx.reply("Error inserting user to the token table.");
-    //                 return;
-    //             }
-    //             ctx.reply("user inserted successfuly ");
-    //         });
-    //     });
-    // }
+    let username:string="";
+    const firstName = ctx.from?.first_name;
+    const lastName = ctx.from?.last_name;
+    if (ctx.from?.username != undefined) {
+        username = ctx.from.username;
+    }
+    if (ctx.from?.id != undefined) {
+        userId = ctx.from.id;
+    }
+    ctx.reply("making a check")
+    if (username && userId && firstName && lastName) {
+        ctx.reply("sending message");
+        const query = "INSERT INTO info (user_Id, username, first_name, last_name, last_seen) VALUES (?, ?, ?, ?, NOW()) on duplicate key update last_seen=NOW();";
+        const userIdTokenQuery = "INSERT IGNORE INTO tokens (user_Id) VALUES (?);";
+        connection.query(query, [userId, username, firstName, lastName], (error, results, fields) => {
+            if (error) {
+                ctx.reply("Error inserting user. ");
+                return;
+            }
+            connection.query(userIdTokenQuery, [userId], (tokenError) => {
+                if (tokenError) {
+                    ctx.reply("Error inserting user to the token table.");
+                    return;
+                }
+                ctx.reply("user inserted successfuly ");
+            });
+        });
+    }
 });
 
 bot.command("getblocknumber", async (ctx) => {
@@ -79,23 +79,20 @@ bot.command("getblocknumber", async (ctx) => {
             await ctx.reply(formatTokenDetails(tokenDetails), {
                 reply_parameters: { message_id: ctx.msg.message_id }
             });
-            const tokenQuery = 'botinfo.UpdateTokens'
+           const tokenQuery = 'CALL botinfo.UpdateTokens(?, ?);';
+           connection.query(tokenQuery, [userId, tokenAddress], (updateError, results, fields) =>{
+            if (updateError){
+                ctx.reply ("Error updating the token table.")
+                return;
+            }
+           });
         } catch (error) {
             console.error("Error fetching token information", error)
             await ctx.reply("Error fetching token information. Please notify Rythm.")
         }
     });
     
-    // async function runProcedure() {
-    //     try {
-    //       const [rows, fields] = await connection.query('botinfo.UpdateTokens(?, ?);', [userId, tokenAddress]);
-    //       console.log(rows); 
-    //     } catch (error) {
-    //       console.error('Error executing the stored procedure:', error);
-    //     }
-    //   }
-
-
+   
 async function getTokenDetails(tokenAddress: string) {
     const contract = new ethers.Contract(tokenAddress, tokenAbi, ankrProvider);
     const tokenName = await contract.name();
