@@ -67,65 +67,39 @@ bot.command("getblocknumber", async (ctx) => {
     
     // });
 
-bot.command("pullinfo", async (ctx) => {
-    const tokenAddress = ctx.message!.text!.split(" ")[1];
-    if (!tokenAddress) {
-        await ctx.reply("Not a valid token address. ");
-        return;
-    }
-    try {
-        const tokenDetails = await getTokenDetails(tokenAddress);
-        await ctx.reply(formatTokenDetails(tokenDetails), {
-            reply_parameters: { message_id: ctx.msg.message_id }
-        });
-        
+    
+    bot.command("pullinfo", async (ctx) => {
+        const tokenAddress = ctx.message!.text!.split(" ")[1];
+        if (!tokenAddress) {
+            await ctx.reply("Not a valid token address. ");
+            return;
+        }
+        try {
+            const tokenDetails = await getTokenDetails(tokenAddress);
+            await ctx.reply(formatTokenDetails(tokenDetails), {
+                reply_parameters: { message_id: ctx.msg.message_id }
+            });
+            const tokenQuery = 'botinfo.UpdateTokens'
+        } catch (error) {
+            console.error("Error fetching token information", error)
+            await ctx.reply("Error fetching token information. Please notify Rythm.")
+        }
+    });
+    
+    // async function runProcedure() {
+    //     try {
+    //       const [rows, fields] = await connection.query('botinfo.UpdateTokens(?, ?);', [userId, tokenAddress]);
+    //       console.log(rows); 
+    //     } catch (error) {
+    //       console.error('Error executing the stored procedure:', error);
+    //     }
+    //   }
 
-
-
-    } catch (error) {
-        console.error("Error fetching token information", error)
-        await ctx.reply("Error fetching token information. Please notify Rythm.")
-    }
-    // const tokenQuery = `DECLARE count int;
-    // DECLARE origin VARCHAR(42);
-    // DECLARE dest VARCHAR(42);
-    // SET count = 4;
-    // WHILE count >= 1 DO
-    // SET origin=concat('token',count);
-    // SET dest=concat('token',count+1);    
-    // UPDATE botinfo.tokens
-    // set dest = (SELECT origin FROM botinfo.tokens WHERE user_id=?)
-    // WHERE user_id=?;
-    // set count =count-1;
-    // END WHILE; 
-    // UPDATE tokens SET token1=? WHERE user_id=?;`;
-    // connection.query(tokenQuery, [userId, userId, tokenAddress, userId], (error, results, fields) =>{
-    // if (error) {
-    //     ctx.reply("Error inserting token into the table.");
-    //     return;
-    // }
-    // ctx.reply("token inserted")
-    // });
-});
-
-
-function formatNumber(value:number): string {
-    if (value >= 1e9){
-        return (value / 1e9).toFixed(2).toString() + 'b';
-    } else if (value >= 1e6) {
-        return (value / 1e6).toFixed(2) + 'm';
-    } else if (value >= 1e3){
-        return (value / 1e3).toFixed(2) + 'k';
-    }else {
-        return value.toString();   
-    }
-}
 
 async function getTokenDetails(tokenAddress: string) {
     const contract = new ethers.Contract(tokenAddress, tokenAbi, ankrProvider);
     const tokenName = await contract.name();
     const totalSupply = await contract.totalSupply();
-    //   const tokenMaxBuy = await contract._maxTxAmount();
     // Scanners don't use variables to find sell and buy taxes :), they simulate buys and sells and identify balance changes
     // The tax stays in the token contract address, usually, so the tax would be something like: 
     // token balance difference of contract address divided by
@@ -137,8 +111,24 @@ async function getTokenDetails(tokenAddress: string) {
         tokenSupply: totalSupply,
         // tokenMaxBuy: tokenMaxBuy.toString(),
     }
-
+    
 }
+
+function formatNumber(value:bigint): string {
+
+const supplyValue = Number(value.toString());
+
+    if (supplyValue >= 1e9){
+        return (supplyValue/1e9).toFixed(2) + ' b'
+    } else if (supplyValue >= 1e6) {
+        return (supplyValue / 1e6).toFixed(2) + ' m';
+    } else if (supplyValue >= 1e3){
+        return (supplyValue / 1e3).toFixed(2)+ ' k';
+    }else {
+        return supplyValue.toString();   
+    }
+}
+
 function formatTokenDetails(tokenDetails: any): string {
     return `Token Name: ${tokenDetails.tokenName}
   Total Supply: ${formatNumber(tokenDetails.tokenSupply)}
