@@ -3,6 +3,7 @@ import { ethers, JsonRpcProvider } from "ethers";
 import { createConnection, Connection } from "mysql2";
 import tokenAbi from './abi.json'
 
+
 const bot = new Bot("6982927940:AAHxd-jtUvEeWrLyWIeOKytcmlEaym_TuZc");
 
 const ankrProvider = new JsonRpcProvider("https://rpc.ankr.com/eth");
@@ -23,7 +24,7 @@ async function connectToDatabase(ctx: Context) {
 let userId=0;
 
 bot.command("start", async (ctx) => {
-    // await connectToDatabase(ctx);
+    await connectToDatabase(ctx);
     await ctx.reply(
         "My name is the CyberSeer, and I will be assisting you with your crypto magik."
     );
@@ -67,7 +68,6 @@ bot.command("getblocknumber", async (ctx) => {
     
     // });
 
-    
     bot.command("pullinfo", async (ctx) => {
         const tokenAddress = ctx.message!.text!.split(" ")[1];
         if (!tokenAddress) {
@@ -76,23 +76,20 @@ bot.command("getblocknumber", async (ctx) => {
         }
         try {
             const tokenDetails = await getTokenDetails(tokenAddress);
-            await ctx.reply(formatTokenDetails(tokenDetails), {
+            const isHoneypot = await checkHoneypot(tokenAddress);
+
+            await ctx.reply(formatTokenDetails(tokenDetails, isHoneypot), {
                 reply_parameters: { message_id: ctx.msg.message_id }
             });
            const tokenQuery = 'CALL botinfo.UpdateTokens(?, ?);';
-           connection.query(tokenQuery, [userId, tokenAddress], (updateError, results, fields) =>{
-            if (updateError){
-                ctx.reply ("Error updating the token table.")
-                return;
-            }
-           });
+        //    connection.query(tokenQuery, [userId, tokenAddress], (updateError, results, fields) => {
+        //    });
         } catch (error) {
             console.error("Error fetching token information", error)
             await ctx.reply("Error fetching token information. Please notify Rythm.")
         }
     });
-    
-   
+
 async function getTokenDetails(tokenAddress: string) {
     const contract = new ethers.Contract(tokenAddress, tokenAbi, ankrProvider);
     const tokenName = await contract.name();
@@ -111,6 +108,21 @@ async function getTokenDetails(tokenAddress: string) {
     
 }
 
+async function checkHoneypot(tokenAddress: string){
+    try {
+        const response = await fetch('https://api.honeypot.is/v2/IsHoneypot?address=${tokenAddress}');
+        if (!response.ok){
+            throw new Error ("Failed to check for honeypot")
+        }
+        const data = await response.json();
+        return data.honeypotResult?.isHoneypot || false;
+    }catch (honeypotError){
+        console.error('Error checking the honeypot data', honeypotError)
+        return false;
+    }
+}
+    
+
 function formatNumber(value:bigint): string {
 
 const supplyValue = Number(value);
@@ -126,10 +138,11 @@ const supplyValue = Number(value);
     }
 }
 
-function formatTokenDetails(tokenDetails: any): string {
+function formatTokenDetails(tokenDetails: any, isHoneypot: any): string {
     return `Token Name: ${tokenDetails.tokenName}
   Total Supply: ${formatNumber(tokenDetails.tokenSupply)}
   Max Buy: ${tokenDetails.tokenMaxBuy}
+  Honeypot Status: ${isHoneypot ? 'Token looks like a honeypot': 'Token looks safe'}
   `
 }
 
