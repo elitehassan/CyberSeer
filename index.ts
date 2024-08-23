@@ -8,23 +8,23 @@ const bot = new Bot("6982927940:AAHxd-jtUvEeWrLyWIeOKytcmlEaym_TuZc");
 
 const ankrProvider = new JsonRpcProvider("https://rpc.ankr.com/eth");
 
-let connection: Connection;
-async function connectToDatabase(ctx: Context) {
-    try {
-        connection = await createConnection({
-            host: "172.22.48.66",
-            user: "root",
-            password: "My$QLpa$$w0rd",
-            database: "botinfo"
-        });
-    } catch (error) {
-        await ctx.reply("Error connecting to the database", error.message);
-    }
-}   
+// let connection: Connection;
+// async function connectToDatabase(ctx: Context) {
+//     try {
+//         connection = await createConnection({
+//             host: "172.22.48.66",
+//             user: "root",
+//             password: "My$QLpa$$w0rd",
+//             database: "botinfo"
+//         });q
+//     } catch (error) {
+//         await ctx.reply("Error connecting to the database", error.message);
+//     }
+// }   
 let userId=0;
 
 bot.command("start", async (ctx) => {
-    await connectToDatabase(ctx);
+
     await ctx.reply(
         "My name is the CyberSeer, and I will be assisting you with your crypto magik."
     );
@@ -37,25 +37,7 @@ bot.command("start", async (ctx) => {
     if (ctx.from?.id != undefined) {
         userId = ctx.from.id;
     }
-    ctx.reply("making a check")
-    if (username && userId && firstName && lastName) {
-        ctx.reply("sending message");
-        const query = "INSERT INTO info (user_Id, username, first_name, last_name, last_seen) VALUES (?, ?, ?, ?, NOW()) on duplicate key update last_seen=NOW();";
-        const userIdTokenQuery = "INSERT IGNORE INTO tokens (user_Id) VALUES (?);";
-        connection.query(query, [userId, username, firstName, lastName], (error, results, fields) => {
-            if (error) {
-                ctx.reply("Error inserting user. ");
-                return;
-            }
-            connection.query(userIdTokenQuery, [userId], (tokenError) => {
-                if (tokenError) {
-                    ctx.reply("Error inserting user to the token table.");
-                    return;
-                }
-                ctx.reply("user inserted successfuly ");
-            });
-        });
-    }
+   
 });
 
 bot.command("getblocknumber", async (ctx) => {
@@ -81,9 +63,6 @@ bot.command("getblocknumber", async (ctx) => {
             await ctx.reply(formatTokenDetails(tokenDetails, isHoneypot), {
                 reply_parameters: { message_id: ctx.msg.message_id }
             });
-           const tokenQuery = 'CALL botinfo.UpdateTokens(?, ?);';
-        //    connection.query(tokenQuery, [userId, tokenAddress], (updateError, results, fields) => {
-        //    });
         } catch (error) {
             console.error("Error fetching token information", error)
             await ctx.reply("Error fetching token information. Please notify Rythm.")
@@ -138,7 +117,7 @@ const supplyValue = Number(value);
     }
 }
 
-function formatTokenDetails(tokenDetails: any, isHoneypot: any): string {
+function formatTokenDetails(tokenDetails: any, isHoneypot: boolean): string {
     return `Token Name: ${tokenDetails.tokenName}
   Total Supply: ${formatNumber(tokenDetails.tokenSupply)}
   Max Buy: ${tokenDetails.tokenMaxBuy}
