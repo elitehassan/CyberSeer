@@ -87,7 +87,7 @@ bot.command("getblocknumber", async (ctx) => {
             }
            });
         } catch (error) {
-            console.error("Error fetching token information", error)
+            console.log(error);
             await ctx.reply("Error fetching token information. Please notify Rythm.")
         }
     });
