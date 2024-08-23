@@ -89,7 +89,7 @@ async function getTokenDetails(tokenAddress: string) {
 
 async function checkHoneypot(tokenAddress: string){
     try {
-        const response = await fetch('https://api.honeypot.is/v2/IsHoneypot?address=${tokenAddress}');
+        const response = await fetch('https://api.honeypot.is/your-endpoint');
         if (!response.ok){
             throw new Error ("Failed to check for honeypot")
         }
