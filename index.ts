@@ -3,27 +3,28 @@ import { ethers, JsonRpcProvider } from "ethers";
 import { createConnection, Connection } from "mysql2";
 import tokenAbi from './abi.json'
 
+
 const bot = new Bot("6982927940:AAHxd-jtUvEeWrLyWIeOKytcmlEaym_TuZc");
 
 const ankrProvider = new JsonRpcProvider("https://rpc.ankr.com/eth");
 
-let connection: Connection;
-async function connectToDatabase(ctx: Context) {
-    try {
-        connection = await createConnection({
-            host: "172.22.48.66",
-            user: "root",
-            password: "My$QLpa$$w0rd",
-            database: "botinfo"
-        });
-    } catch (error) {
-        await ctx.reply("Error connecting to the database", error.message);
-    }
-}   
+// let connection: Connection;
+// async function connectToDatabase(ctx: Context) {
+//     try {
+//         connection = await createConnection({
+//             host: "172.22.48.66",
+//             user: "root",
+//             password: "My$QLpa$$w0rd",
+//             database: "botinfo"
+//         });q
+//     } catch (error) {
+//         await ctx.reply("Error connecting to the database", error.message);
+//     }
+// }   
 let userId=0;
 
 bot.command("start", async (ctx) => {
-    // await connectToDatabase(ctx);
+
     await ctx.reply(
         "My name is the CyberSeer, and I will be assisting you with your crypto magik."
     );
@@ -36,25 +37,7 @@ bot.command("start", async (ctx) => {
     if (ctx.from?.id != undefined) {
         userId = ctx.from.id;
     }
-    ctx.reply("making a check")
-    if (username && userId && firstName && lastName) {
-        ctx.reply("sending message");
-        const query = "INSERT INTO info (user_Id, username, first_name, last_name, last_seen) VALUES (?, ?, ?, ?, NOW()) on duplicate key update last_seen=NOW();";
-        const userIdTokenQuery = "INSERT IGNORE INTO tokens (user_Id) VALUES (?);";
-        connection.query(query, [userId, username, firstName, lastName], (error, results, fields) => {
-            if (error) {
-                ctx.reply("Error inserting user. ");
-                return;
-            }
-            connection.query(userIdTokenQuery, [userId], (tokenError) => {
-                if (tokenError) {
-                    ctx.reply("Error inserting user to the token table.");
-                    return;
-                }
-                ctx.reply("user inserted successfuly ");
-            });
-        });
-    }
+   
 });
 
 bot.command("getblocknumber", async (ctx) => {
@@ -67,7 +50,6 @@ bot.command("getblocknumber", async (ctx) => {
     
     // });
 
-    
     bot.command("pullinfo", async (ctx) => {
         const tokenAddress = ctx.message!.text!.split(" ")[1];
         if (!tokenAddress) {
@@ -76,23 +58,17 @@ bot.command("getblocknumber", async (ctx) => {
         }
         try {
             const tokenDetails = await getTokenDetails(tokenAddress);
-            await ctx.reply(formatTokenDetails(tokenDetails), {
+            const isHoneypot = await checkHoneypot(tokenAddress);
+
+            await ctx.reply(formatTokenDetails(tokenDetails, isHoneypot), {
                 reply_parameters: { message_id: ctx.msg.message_id }
             });
-           const tokenQuery = 'CALL botinfo.UpdateTokens(?, ?);';
-           connection.query(tokenQuery, [userId, tokenAddress], (updateError, results, fields) =>{
-            if (updateError){
-                ctx.reply ("Error updating the token table.")
-                return;
-            }
-           });
         } catch (error) {
             console.log(error);
             await ctx.reply("Error fetching token information. Please notify Rythm.")
         }
     });
-    
-   
+
 async function getTokenDetails(tokenAddress: string) {
     const contract = new ethers.Contract(tokenAddress, tokenAbi, ankrProvider);
     const tokenName = await contract.name();
@@ -105,18 +81,33 @@ async function getTokenDetails(tokenAddress: string) {
     // to make this more complicated
     return {
         tokenName: tokenName,
-        tokenSupply: totalSupply,
+        tokenSupply: ethers.formatUnits(totalSupply, 8).toString(),
         // tokenMaxBuy: tokenMaxBuy.toString(),
     }
     
 }
 
+async function checkHoneypot(tokenAddress: string){
+    try {
+        const response = await fetch('https://api.honeypot.is/v2/IsHoneypot?address=${tokenAddress}');
+        if (!response.ok){
+            throw new Error ("Failed to check for honeypot")
+        }
+        const data = await response.json();
+        return data.honeypotResult?.isHoneypot || false;
+    }catch (honeypotError){
+        console.error('Error checking the honeypot data', honeypotError)
+        return false;
+    }
+}
+    
+
 function formatNumber(value:bigint): string {
 
-const supplyValue = Number(value.toString());
+const supplyValue = Number(value);
 
     if (supplyValue >= 10e9){
-        return (supplyValue/10e9).toFixed(2) + ' b'
+        return (supplyValue/10e9).toFixed(2).toString()+ ' b';
     } else if (supplyValue >= 10e6) {
         return (supplyValue / 10e6).toFixed(2) + ' m';
     } else if (supplyValue >= 10e3){
@@ -126,10 +117,11 @@ const supplyValue = Number(value.toString());
     }
 }
 
-function formatTokenDetails(tokenDetails: any): string {
+function formatTokenDetails(tokenDetails: any, isHoneypot: boolean): string {
     return `Token Name: ${tokenDetails.tokenName}
   Total Supply: ${formatNumber(tokenDetails.tokenSupply)}
   Max Buy: ${tokenDetails.tokenMaxBuy}
+  Honeypot Status: ${isHoneypot ? 'Token looks like a honeypot': 'Token looks safe'}
   `
 }
 
