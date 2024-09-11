@@ -100,10 +100,9 @@ async function checkHoneypot(tokenAddress: string){
         return false;
     }
 }
-    
+
 
 function formatNumber(value:bigint): string {
-
 const supplyValue = Number(value);
 
     if (supplyValue >= 10e9){
