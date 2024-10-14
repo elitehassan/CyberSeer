@@ -3,7 +3,6 @@ import { ethers, JsonRpcProvider } from "ethers";
 import { createConnection, Connection } from "mysql2";
 import tokenAbi from './abi.json'
 
-
 const bot = new Bot("6982927940:AAHxd-jtUvEeWrLyWIeOKytcmlEaym_TuZc");
 
 const ankrProvider = new JsonRpcProvider("https://rpc.ankr.com/eth");
