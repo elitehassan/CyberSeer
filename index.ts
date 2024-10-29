@@ -35,7 +35,7 @@ bot.command("start", async (ctx) => {
     }
     if (ctx.from?.id != undefined) {
         userId = ctx.from.id;
-    }
+    }   
    
 });
 
